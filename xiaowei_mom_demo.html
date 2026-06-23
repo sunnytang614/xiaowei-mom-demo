@@ -308,15 +308,20 @@ body {
 .stat-slide .stat-label { font-size: 18px; color: rgba(255,255,255,0.6); margin-top: 12px; }
 .stat-slide .stat-detail { margin-top: 30px; font-size: 15px; color: rgba(255,255,255,0.35); max-width: 280px; line-height: 1.6; }
 
-.compare-slide { background: #0a0a0a; padding: 50px 25px !important; }
-.compare-slide .compare-title { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 35px; }
-.compare-slide .compare-side { text-align: center; max-width: 130px; }
-.compare-slide .compare-year { font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 15px; }
-.compare-slide .compare-chat { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 18px; }
-.compare-arrow { font-size: 28px; color: rgba(255,255,255,0.2); margin: 0 18px; }
-.compare-role { font-size: 12px; color: #07c160; opacity: 0.7; }
-.compare-row { display: flex; justify-content: center; align-items: flex-start; margin-bottom: 30px; }
-.compare-peak { font-size: 18px; font-weight: 600; color: #fff; max-width: 300px; line-height: 1.5; }
+.compare-slide { background: #0a0a0a; padding: 50px 18px !important; }
+.compare-slide .compare-row { display: grid; grid-template-columns: 1fr 36px 1fr; align-items: center; width: 100%; max-width: 340px; }
+.compare-slide .compare-side { min-width: 0; display: flex; flex-direction: column; }
+.compare-slide .compare-side:first-child { align-items: flex-start; }
+.compare-slide .compare-side:last-child { align-items: flex-end; }
+.compare-slide .compare-year { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 16px; letter-spacing: 0.5px; }
+.compare-slide .mirror-chat { width: 100%; display: flex; flex-direction: column; gap: 9px; }
+.compare-slide .mirror-bubble { width: fit-content; max-width: 100%; padding: 10px 12px; border-radius: 7px; font-size: 14px; line-height: 1.35; color: #111; text-align: left; white-space: nowrap; }
+.compare-slide .mirror-bubble.received { align-self: flex-start; background: rgba(255,255,255,0.88); border-bottom-left-radius: 2px; }
+.compare-slide .mirror-bubble.sent { align-self: flex-end; background: #95ec69; border-bottom-right-radius: 2px; }
+.compare-slide .compare-arrow { position: relative; width: 36px; height: 2px; background: rgba(255,255,255,0.18); }
+.compare-slide .compare-arrow::after { content: ""; position: absolute; right: -1px; top: 50%; width: 7px; height: 7px; border-top: 2px solid rgba(7,193,96,0.8); border-right: 2px solid rgba(7,193,96,0.8); transform: translateY(-50%) rotate(45deg); }
+.compare-slide .compare-peak { margin-top: 64px; font-size: 23px; font-weight: 650; color: #fff; max-width: 300px; line-height: 1.55; letter-spacing: -0.5px; }
+.compare-slide .compare-peak span { display: block; color: rgba(255,255,255,0.58); font-size: 17px; font-weight: 400; margin-bottom: 5px; letter-spacing: 0; }
 
 .insight-slide { background: linear-gradient(180deg, #1a1a2e, #0a0a0a); }
 .insight-slide .insight-main { font-size: 24px; font-weight: 600; line-height: 1.6; max-width: 300px; }
@@ -510,21 +515,24 @@ body {
   </div>
   
   <div class="video-slide compare-slide" data-duration="4500">
-    <div class="compare-title">关心的话，悄悄交换了位置</div>
     <div class="compare-row">
       <div class="compare-side">
-        <div class="compare-year">2013年</div>
-        <div class="compare-chat"><div>妈妈：到了吗？</div><div>我：到了</div></div>
-        <div class="compare-role">→ 她在问</div>
+        <div class="compare-year">2013</div>
+        <div class="mirror-chat">
+          <div class="mirror-bubble received">到了吗？</div>
+          <div class="mirror-bubble sent">到了</div>
+        </div>
       </div>
-      <div class="compare-arrow">→</div>
+      <div class="compare-arrow"></div>
       <div class="compare-side">
-        <div class="compare-year">2026年</div>
-        <div class="compare-chat"><div>我：到家了吗？</div><div>妈妈：到了</div></div>
-        <div class="compare-role">→ 你在问</div>
+        <div class="compare-year">2026</div>
+        <div class="mirror-chat">
+          <div class="mirror-bubble sent">到家了吗？</div>
+          <div class="mirror-bubble received">到了</div>
+        </div>
       </div>
     </div>
-    <div class="compare-peak">这些话没有消失<br>只是换了一个人说</div>
+    <div class="compare-peak"><span>这些话没有消失</span>只是换了一个人说</div>
     <div class="slide-num">08 / 13</div>
   </div>
   
