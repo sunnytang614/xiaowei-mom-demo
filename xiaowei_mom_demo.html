@@ -693,9 +693,12 @@ function startAmbientMusic() {
       });
     };
 
-    scheduleMusicLoop();
-    const loopTimer = setInterval(scheduleMusicLoop, 16000);
-    ambientAudio = { ctx, masterGain, activeOscillators, loopTimer };
+    ambientAudio = { ctx, masterGain, activeOscillators, loopTimer: null };
+    ctx.resume().then(() => {
+      if (!ambientAudio || ambientAudio.ctx !== ctx) return;
+      scheduleMusicLoop();
+      ambientAudio.loopTimer = setInterval(scheduleMusicLoop, 16000);
+    }).catch(() => {});
   } catch (error) {
     ambientAudio = null;
   }
@@ -704,7 +707,7 @@ function startAmbientMusic() {
 function stopAmbientMusic() {
   if (!ambientAudio) return;
   const { ctx, masterGain, activeOscillators, loopTimer } = ambientAudio;
-  clearInterval(loopTimer);
+  if (loopTimer) clearInterval(loopTimer);
   masterGain.gain.cancelScheduledValues(ctx.currentTime);
   masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
   masterGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 1);
