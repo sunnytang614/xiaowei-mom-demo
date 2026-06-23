@@ -636,7 +636,71 @@ const progressFill = document.getElementById('progressFill');
 const skipBtn = document.getElementById('skipBtn');
 const enterBtn = document.getElementById('enterBtn');
 let slideTimers = [];
+let ambientAudio = null;
 const totalDuration = Array.from(slides).reduce((sum, s) => sum + parseInt(s.dataset.duration), 0);
+
+function startAmbientMusic() {
+  try {
+    if (ambientAudio) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    const ctx = new AudioContext();
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.8);
+    masterGain.connect(ctx.destination);
+
+    const drone = [110, 164.81, 220].map((frequency, index) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = index === 1 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+      gain.gain.setValueAtTime(index === 0 ? 0.08 : 0.035, ctx.currentTime);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start();
+      return osc;
+    });
+
+    const playBell = () => {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime([659.25, 739.99, 880][Math.floor(Math.random() * 3)], now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.045, now + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 1.9);
+    };
+
+    playBell();
+    const bellTimer = setInterval(playBell, 5600);
+    ambientAudio = { ctx, masterGain, drone, bellTimer };
+  } catch (error) {
+    ambientAudio = null;
+  }
+}
+
+function stopAmbientMusic() {
+  if (!ambientAudio) return;
+  const { ctx, masterGain, drone, bellTimer } = ambientAudio;
+  clearInterval(bellTimer);
+  masterGain.gain.cancelScheduledValues(ctx.currentTime);
+  masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 1);
+  setTimeout(() => {
+    drone.forEach(osc => {
+      try { osc.stop(); } catch (error) {}
+    });
+    ctx.close();
+  }, 1100);
+  ambientAudio = null;
+}
 
 function showSlide(index) {
   if (index >= slides.length) { closeVideo(); return; }
@@ -649,8 +713,14 @@ function showSlide(index) {
   slideTimers.push(setTimeout(() => showSlide(index + 1), parseInt(slides[index].dataset.duration)));
 }
 
-function startVideo() { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; showSlide(0); }
+function startVideo() {
+  startAmbientMusic();
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  showSlide(0);
+}
 function closeVideo() {
+  stopAmbientMusic();
   overlay.classList.remove('active');
   document.body.style.overflow = '';
   slideTimers.forEach(t => clearTimeout(t));
