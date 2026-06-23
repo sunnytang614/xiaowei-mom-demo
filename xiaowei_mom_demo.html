@@ -282,12 +282,29 @@ body {
 
 .chat-flash-slide { background: #0a0a0a; padding: 60px 20px !important; }
 .chat-flash-slide .chat-pair { max-width: 320px; width: 100%; margin-bottom: 30px; }
-.chat-flash-slide .chat-date { font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 12px; text-align: left; }
-.chat-flash-slide .chat-msgs { display: flex; flex-direction: column; gap: 8px; }
-.chat-flash-slide .chat-msg { font-size: 16px; padding: 10px 14px; border-radius: 8px; max-width: 80%; line-height: 1.5; }
-.chat-flash-slide .chat-msg.mom { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); align-self: flex-start; border-bottom-left-radius: 2px; }
-.chat-flash-slide .chat-msg.me { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); align-self: flex-end; border-bottom-right-radius: 2px; }
-.chat-flash-slide .chat-msg .sender { font-size: 11px; opacity: 0.5; margin-bottom: 4px; display: block; }
+.chat-flash-slide .chat-date { font-size: 12px; color: rgba(255,255,255,0.38); margin-bottom: 14px; text-align: center; }
+.chat-flash-slide .chat-msgs { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.chat-flash-slide .chat-msg { position: relative; font-size: 16px; padding: 10px 14px; border-radius: 6px; max-width: 72%; line-height: 1.5; color: #111; text-align: left; }
+.chat-flash-slide .chat-msg.mom { background: #ffffff; color: #111; align-self: flex-start; margin-left: 44px; border-bottom-left-radius: 2px; }
+.chat-flash-slide .chat-msg.me { background: #95ec69; color: #111; align-self: flex-end; margin-right: 44px; border-bottom-right-radius: 2px; }
+.chat-flash-slide .chat-msg .sender { display: none; }
+.chat-msg.mom::before,
+.chat-msg.me::after {
+  position: absolute;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+.chat-msg.mom::before { content: "妈"; left: -44px; background: linear-gradient(135deg, #d6a77a, #9d6c4c); }
+.chat-msg.me::after { content: "我"; right: -44px; background: linear-gradient(135deg, #07c160, #079b50); }
 
 .stat-slide { background: #0a0a0a; }
 .stat-slide .stat-number { font-size: 72px; font-weight: 800; background: linear-gradient(90deg, #07c160, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
