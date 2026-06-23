@@ -290,21 +290,18 @@ body {
 .chat-flash-slide .chat-msg .sender { display: none; }
 .chat-msg.mom::before,
 .chat-msg.me::after {
+  content: "";
   position: absolute;
   top: 0;
   width: 34px;
   height: 34px;
   border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.chat-msg.mom::before { content: "妈"; left: -44px; background: linear-gradient(135deg, #d6a77a, #9d6c4c); }
-.chat-msg.me::after { content: "我"; right: -44px; background: linear-gradient(135deg, #07c160, #079b50); }
+.chat-msg.mom::before { left: -44px; background-image: url('assets/avatar-mom.jpg'); }
+.chat-msg.me::after { right: -44px; background-image: url('assets/avatar-daughter.jpg'); }
 
 .stat-slide { background: #0a0a0a; }
 .stat-slide .stat-number { font-size: 72px; font-weight: 800; background: linear-gradient(90deg, #07c160, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
