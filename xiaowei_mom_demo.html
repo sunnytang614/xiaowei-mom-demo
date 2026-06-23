@@ -651,36 +651,51 @@ function startAmbientMusic() {
     masterGain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.8);
     masterGain.connect(ctx.destination);
 
-    const drone = [110, 164.81, 220].map((frequency, index) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = index === 1 ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-      gain.gain.setValueAtTime(index === 0 ? 0.08 : 0.035, ctx.currentTime);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start();
-      return osc;
-    });
+    const chordProgression = [
+      [130.81, 196.00, 261.63],
+      [123.47, 196.00, 246.94],
+      [110.00, 164.81, 220.00],
+      [130.81, 174.61, 220.00],
+    ];
+    const melodyNotes = [
+      329.63, 392.00, 440.00, 392.00,
+      523.25, 493.88, 392.00, 329.63,
+    ];
+    const activeOscillators = [];
 
-    const playBell = () => {
-      const now = ctx.currentTime;
+    const playTone = (frequency, startAt, duration, volume, type = 'sine') => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime([659.25, 739.99, 880][Math.floor(Math.random() * 3)], now);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(0.045, now + 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, startAt);
+      gain.gain.setValueAtTime(0.0001, startAt);
+      gain.gain.linearRampToValueAtTime(volume, startAt + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
       osc.connect(gain);
       gain.connect(masterGain);
-      osc.start(now);
-      osc.stop(now + 1.9);
+      osc.start(startAt);
+      osc.stop(startAt + duration + 0.1);
+      activeOscillators.push(osc);
+      return osc;
     };
 
-    playBell();
-    const bellTimer = setInterval(playBell, 5600);
-    ambientAudio = { ctx, masterGain, drone, bellTimer };
+    const scheduleMusicLoop = () => {
+      const startAt = ctx.currentTime + 0.05;
+      chordProgression.forEach((chord, chordIndex) => {
+        const chordStart = startAt + chordIndex * 4;
+        chord.forEach((frequency, noteIndex) => {
+          playTone(frequency, chordStart, 4.2, noteIndex === 0 ? 0.035 : 0.022, 'triangle');
+        });
+      });
+      melodyNotes.forEach((frequency, noteIndex) => {
+        const noteStart = startAt + 1 + noteIndex * 1.6;
+        playTone(frequency, noteStart, 1.35, 0.045, 'sine');
+      });
+    };
+
+    scheduleMusicLoop();
+    const loopTimer = setInterval(scheduleMusicLoop, 16000);
+    ambientAudio = { ctx, masterGain, activeOscillators, loopTimer };
   } catch (error) {
     ambientAudio = null;
   }
@@ -688,13 +703,13 @@ function startAmbientMusic() {
 
 function stopAmbientMusic() {
   if (!ambientAudio) return;
-  const { ctx, masterGain, drone, bellTimer } = ambientAudio;
-  clearInterval(bellTimer);
+  const { ctx, masterGain, activeOscillators, loopTimer } = ambientAudio;
+  clearInterval(loopTimer);
   masterGain.gain.cancelScheduledValues(ctx.currentTime);
   masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
   masterGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 1);
   setTimeout(() => {
-    drone.forEach(osc => {
+    activeOscillators.forEach(osc => {
       try { osc.stop(); } catch (error) {}
     });
     ctx.close();
