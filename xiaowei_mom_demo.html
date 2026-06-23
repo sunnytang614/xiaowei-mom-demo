@@ -602,7 +602,7 @@ body {
   <div class="section-gap"></div>
 
   <!-- 预览片段 - 移到了行动选项之前 -->
-  <div class="timestamp-marker">这些是你们的记录</div>
+  <div class="timestamp-marker"><span>这些是你们的记录</span></div>
 
   <div class="moment-card">
     <div class="moment-header">
@@ -926,6 +926,21 @@ function startVideo() {
 }
 
 function closeVideo() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+  slideTimers.forEach(t => clearTimeout(t));
+  slides.forEach(s => s.classList.remove('active'));
+  progressFill.style.width = '0%';
+}
+
+// 绑定事件
+enterBtn.addEventListener('click', startVideo);
+skipBtn.addEventListener('click', closeVideo);
+</script>
+
+</body>
+</html>
+seVideo() {
   overlay.classList.remove('active');
   document.body.style.overflow = '';
   slideTimers.forEach(t => clearTimeout(t));
